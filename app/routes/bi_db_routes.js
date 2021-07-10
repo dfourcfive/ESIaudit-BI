@@ -10,8 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/bi/dim_data",[authJwt.verifyToken],controller.getDimTablesData);
-  app.get("/api/bi/fact_data",[authJwt.verifyToken],controller.getFactTablesData);
-  app.post("/api/bi/sql",[authJwt.verifyToken],controller.ExecSql);
+  app.get("/api/bi/dim_data",controller.getDimTablesData);
+  app.get("/api/bi/fact_data",controller.getFactTablesData);
+  app.post("/api/bi/sql",controller.ExecSql);
 
 };

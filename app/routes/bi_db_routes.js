@@ -12,6 +12,6 @@ module.exports = function(app) {
 
   app.get("/api/bi/dim_data",[authJwt.verifyToken],controller.getDimTablesData);
   app.get("/api/bi/fact_data",[authJwt.verifyToken],controller.getFactTablesData);
-  app.get("/api/bi/sql",[authJwt.verifyToken],controller.ExecSql);
+  app.post("/api/bi/sql",[authJwt.verifyToken],controller.ExecSql);
 
 };

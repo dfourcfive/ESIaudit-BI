@@ -1,3 +1,15 @@
+const BI_db = require("../helpers/BI_db_handler"); 
+exports.sqlToData=(sql)=>{
+    var data;
+    BI_db.sequelize.query(sql).then((result) => {
+        data=JSON.stringify(result[0][0]);
+        console.log("from sql to data "+result);
+        return data;
+    }).catch((err) => {
+        console.log({err});
+    });
+    return data;
+}
 
 
 exports.queryToSql=(req)=>{

@@ -4,11 +4,12 @@ exports.sqlToData=(sql)=>{
     var data;
     BI_db.sequelize.query(sql).then((result) => {
         data=JSON.stringify(result[0][0]);
-        console.log("from sql to data "+data);
+        //console.log("from sql to data "+data);
         return data;
     }).catch((err) => {
         console.log({err});
     });
+    console.log('1 :'+data);
     return data;
 }
 

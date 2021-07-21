@@ -20,8 +20,9 @@ exports.ExecSql=(req, res) => {
     console.log(req.body);
     var sql = bi_query_parser.queryToSql(req.body);
     try {
+        console.log('0 :'+data);
         var data =  bi_query_parser.sqlToData(sql);
-        console.log('from execSql'+data);
+        console.log('2 :'+data);
         res.send({data});    
     } catch (error) {
         res.status(500).send({error});

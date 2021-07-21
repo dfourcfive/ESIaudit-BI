@@ -1,4 +1,5 @@
 const BI_db = require("../helpers/BI_db_handler"); 
+
 exports.sqlToData=(sql)=>{
     var data;
     BI_db.sequelize.query(sql).then((result) => {

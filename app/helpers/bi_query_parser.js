@@ -3,7 +3,7 @@ exports.sqlToData=(sql)=>{
     var data;
     BI_db.sequelize.query(sql).then((result) => {
         data=JSON.stringify(result[0][0]);
-        console.log("from sql to data "+result);
+        console.log("from sql to data "+data);
         return data;
     }).catch((err) => {
         console.log({err});
@@ -11,7 +11,18 @@ exports.sqlToData=(sql)=>{
     return data;
 }
 
-
+function ConvertInsideParams(param){
+    if(param.includes('(')){
+        const myArr = param.split("(");
+        const content = myArr[1];
+        const left = content.substring(0,content.length-1);
+        const result =myArr[0]+'("'+left+'"'+')';
+        return result;
+    }else{
+        const result = '"'+param+'"';
+        return result;
+    };
+ }
 exports.queryToSql=(req)=>{
     var sql='SELECT ';
    var tables = Array.from(req['tables']); 
@@ -25,18 +36,21 @@ exports.queryToSql=(req)=>{
     tables_names.push(tables[i]['name']);
     let arr_params= Array.from(tables[i]['params']);
     for(let j=0 ; j<arr_params.length ; j++){
-        let tmp = tables_names[i];
-        tmp=tmp+'.';
-        tmp=tmp+arr_params[j];
+        //let tmp = tables_names[i];
+        //tmp=tmp+'.';
+        //tmp=tmp+arr_params[j];
+        //the above first attempt
         //
-        params_names[j]=tmp;
+        params_names[j]=ConvertInsideParams(arr_params[j]);
         console.log(params_names[j]);
         //here append to sql params to select
-        sql= sql + params_names[j]+' ';
+        sql= sql + params_names[j]+',';
     }
 
    }
    //append to sql from tables names
+   //remove last ','
+   sql = sql.substring(0,sql.length-1);
    sql = sql +' FROM ';
    for(let i=0;i<tables_names.length ;i++){
        sql = sql + tables_names[i]+' ,';
@@ -47,7 +61,9 @@ exports.queryToSql=(req)=>{
    //table_names => tab1 t1, tab2 t2, tab3 t3
 
    //here handle groupBy
-   sql = sql + ' GROUP BY '
+   if(isGroupBy === true){
+    sql = sql + ' GROUP BY ';       
+   }
    if(isGroupBy === true){
 
     var GroupBy = Array.from(req.GroupBy);
@@ -56,7 +72,8 @@ exports.queryToSql=(req)=>{
         var GroupBy_table= GroupBy[i]['name'];
         var GroupBy_params=Array.from(GroupBy[i]['params']);
         for(let j=0 ; j<GroupBy_params.length ; j++){
-            GroupBy_result[j]=GroupBy_table+'.'+GroupBy_params[j];
+            //GroupBy_result[j]=GroupBy_table+'.'+GroupBy_params[j];
+            GroupBy_result[j]='"'+GroupBy_params[j]+'"';
             sql = sql + GroupBy_result[j] +' ,'
         }
     }
@@ -67,14 +84,15 @@ exports.queryToSql=(req)=>{
    //here handle  roleup
        if(isRoleUp === true){
         sql = sql.substring(0,sql.length-1);
-        sql = sql + ', ROLLUP (';
+        sql = sql + ' ROLLUP (';
         var RoleUp = Array.from(req.RollUp);
         var roleup_result=[];
         for(let i=0;i<RoleUp.length;i++){
             var roleup_table= RoleUp[i]['name'];
             var roleup_params=Array.from(RoleUp[i]['params']);
             for(let j=0 ; j<roleup_params.length ; j++){
-                roleup_result[j]=roleup_table+'.'+roleup_params[j];
+               // roleup_result[j]=roleup_table+'.'+roleup_params[j];
+               roleup_result[j]='"'+roleup_params[j]+'"';
                 sql = sql + roleup_result[j]+' ,';
             }
         }
@@ -85,14 +103,14 @@ exports.queryToSql=(req)=>{
       //here handle cube
       if(isCube === true){
         sql = sql.substring(0,sql.length-1);
-        sql = sql + ', CUBE (';
+        sql = sql + ' CUBE (';
         var Cube = Array.from(req.Cube);
         var cube_result=[];
         for(let i=0;i<Cube.length;i++){
             var cube_table= Cube[i]['name'];
             var cube_params=Array.from(Cube[i]['params']);
             for(let j=0 ; j<cube_params.length ; j++){
-                cube_result[j]=cube_table+'.'+cube_params[j];
+                cube_result[j]='"'+cube_params[j]+'"';
                 sql = sql + cube_result[j]+' ,';
             }
         }

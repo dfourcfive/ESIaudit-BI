@@ -17,6 +17,7 @@ exports.getDimTablesData=async (req, res) => {
 }
 
 exports.ExecSql=(req, res) => {
+    console.log(req.body);
     var sql = bi_query_parser.queryToSql(req.body);
     try {
         var data =  bi_query_parser.sqlToData(sql);

@@ -35,7 +35,7 @@ function ConvertInsideParams(param){
 exports.queryToSql=(req)=>{
     var sql='SELECT ';
    var tables = Array.from(req['tables']); 
-   var isRoleUp = req.isRoleUp;
+   var isRoleUp = req.isRollUp;
    var isGroupBy = req.isGroupBy;
    var isCube = req.isCube;
    var isOrderBy=req.isOrderBy;

@@ -20,6 +20,18 @@ function ConvertInsideParams(param){
         return result;
     };
  }
+ function FieldAsSomething(param){
+    if(param.includes('(')){
+        const myArr = param.split("(");
+        const content = myArr[1];
+        const left = content.substring(0,content.length-1);
+        const result =myArr[0]+'_'+left;
+        return result;
+    }else{
+        const result = param;
+        return result;
+    };
+ }
 exports.queryToSql=(req)=>{
     var sql='SELECT ';
    var tables = Array.from(req['tables']); 
@@ -41,7 +53,7 @@ exports.queryToSql=(req)=>{
         params_names[j]=ConvertInsideParams(arr_params[j]);
         console.log(params_names[j]);
         //here append to sql params to select
-        sql= sql + params_names[j]+',';
+        sql= sql + params_names[j]+" AS "+FieldAsSomething(arr_params[j])+' , ';
     }
 
    }

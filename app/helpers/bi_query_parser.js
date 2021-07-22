@@ -3,7 +3,7 @@ const BI_db = require("../helpers/BI_db_handler");
 exports.sqlToData=async(sql)=>{
     var data;
     var result=await BI_db.sequelize.query(sql);
-    data= JSON.stringify(result[0][0]);
+    data= JSON.stringify(result[0]);
     console.log('1 :'+data);
     return data;
 }
@@ -38,6 +38,7 @@ exports.queryToSql=(req)=>{
    var isRoleUp = req.isRoleUp;
    var isGroupBy = req.isGroupBy;
    var isCube = req.isCube;
+   var isOrderBy=req.isOrderBy;
    //transformations to
    var tables_names=[];
    var params_names=[];
@@ -78,7 +79,6 @@ exports.queryToSql=(req)=>{
     var GroupBy = Array.from(req.GroupBy);
     var GroupBy_result=[];
     for(let i=0;i<GroupBy.length;i++){
-        var GroupBy_table= GroupBy[i]['name'];
         var GroupBy_params=Array.from(GroupBy[i]['params']);
         for(let j=0 ; j<GroupBy_params.length ; j++){
             //GroupBy_result[j]=GroupBy_table+'.'+GroupBy_params[j];
@@ -86,8 +86,12 @@ exports.queryToSql=(req)=>{
             sql = sql + GroupBy_result[j] +' ,'
         }
     }
-    sql = sql.substring(0,sql.length-1);
-    sql = sql +';';
+    if((isRoleUp === true)||(isCube === true)){
+        sql = sql +';';
+    }else{
+        sql = sql.substring(0,sql.length-1);
+        sql = sql +';';
+    }
   }
 
    //here handle  roleup
@@ -122,6 +126,19 @@ exports.queryToSql=(req)=>{
                 cube_result[j]='"'+cube_params[j]+'"';
                 sql = sql + cube_result[j]+' ,';
             }
+        }
+        sql = sql.substring(0,sql.length-1);
+        sql= sql + ');'
+      }
+
+       //here handle OrderBy
+       if(isOrderBy === true){
+        sql = sql.substring(0,sql.length-1);
+        sql = sql + ' ORDER BY (';
+        var OrderBy = Array.from(req.OrderBy);
+        var OrderBy_result=[];
+        for(let i=0;i<OrderBy.length;i++){
+            sql=sql+OrderBy[i]+',';
         }
         sql = sql.substring(0,sql.length-1);
         sql= sql + ');'

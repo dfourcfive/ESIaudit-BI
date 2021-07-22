@@ -53,7 +53,7 @@ exports.queryToSql=(req)=>{
         params_names[j]=ConvertInsideParams(arr_params[j]);
         console.log(params_names[j]);
         //here append to sql params to select
-        sql= sql + params_names[j]+" AS "+FieldAsSomething(arr_params[j])+' , ';
+        sql= sql + params_names[j]+" AS "+FieldAsSomething(arr_params[j])+' ,';
     }
 
    }

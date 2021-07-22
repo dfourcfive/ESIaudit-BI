@@ -101,7 +101,7 @@ exports.queryToSql=(req)=>{
         var RoleUp = Array.from(req.RollUp);
         var roleup_result=[];
         for(let i=0;i<RoleUp.length;i++){
-            var roleup_table= RoleUp[i]['name'];
+            //var roleup_table= RoleUp[i]['name'];
             var roleup_params=Array.from(RoleUp[i]['params']);
             for(let j=0 ; j<roleup_params.length ; j++){
                // roleup_result[j]=roleup_table+'.'+roleup_params[j];
@@ -138,7 +138,7 @@ exports.queryToSql=(req)=>{
         var OrderBy = Array.from(req.OrderBy);
         var OrderBy_result=[];
         for(let i=0;i<OrderBy.length;i++){
-            sql=sql+OrderBy[i]+',';
+            sql=sql+ConvertInsideParams(OrderBy[i])+',';
         }
         sql = sql.substring(0,sql.length-1);
         sql= sql + ');'
